@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
 
-export const StyledButton = styled.button`
+export const StyledButton = styled(motion.button)`
   width: 90px;
   height: 30px;
   border-radius: 4px;

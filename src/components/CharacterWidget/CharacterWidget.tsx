@@ -70,10 +70,20 @@ export const CharacterWidget = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 1 }}
           >
-            <StyledButton onClick={(e: any) => handlePrevClick(e)}>
+            <StyledButton
+              whileHover={{
+                scale: 1.1,
+              }}
+              onClick={(e: any) => handlePrevClick(e)}
+            >
               Previous
             </StyledButton>
-            <StyledButton onClick={(e: any) => handleNextClick(e)}>
+            <StyledButton
+              whileHover={{
+                scale: 1.1,
+              }}
+              onClick={(e: any) => handleNextClick(e)}
+            >
               Next
             </StyledButton>
           </CharacterWidgetButtonContainer>
