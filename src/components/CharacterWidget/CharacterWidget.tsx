@@ -14,6 +14,7 @@ import { StyledButton } from "../Button/Button.styled";
 import { useCallback, useEffect } from "react";
 import { fetcher } from "../../utils/fetcher";
 import { API_URL } from "../../config";
+import { Character } from "../../types/RickAndMorty.types";
 
 export const CharacterWidget = () => {
   const {
@@ -31,12 +32,11 @@ export const CharacterWidget = () => {
   const getCharacter = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetcher(`${API_URL}/character/${id}`, {
+      const response: Character = await fetcher(`${API_URL}/character/${id}`, {
         method: "GET",
       });
       setCharacterData(response);
     } catch (e) {
-      console.log(e);
       setError("An error occured... try again later.");
     } finally {
       setIsLoading(false);
@@ -48,6 +48,7 @@ export const CharacterWidget = () => {
   }, [getCharacter]);
 
   if (!characterData) return null;
+
   if (isLoading)
     return (
       <CharacterWidgetState
