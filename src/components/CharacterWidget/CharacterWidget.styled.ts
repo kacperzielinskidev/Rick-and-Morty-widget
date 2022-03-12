@@ -12,7 +12,7 @@ export const CharacterWidgetContainer = styled(motion.div)`
   border: 1px solid #e0e0e0;
 `;
 
-export const CharacterWidgetContainerState = styled(motion.div)`
+export const CharacterWidgetState = styled(motion.div)`
   display: flex;
   flex-direction: column;
   text-align: center;

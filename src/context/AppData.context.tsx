@@ -1,18 +1,18 @@
 import React, {
   createContext,
   useState,
-  useEffect,
   useContext,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from "react";
-import ky from "ky";
-import { API_URL } from "../config";
 import type { Character } from "../types/RickAndMorty.types";
 
 type AppData = {
   characterData: Character | null;
   setCharacterData: Dispatch<SetStateAction<Character | null>>;
+  id: number;
+  setId: Dispatch<SetStateAction<number>>;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   error: string;
@@ -22,12 +22,14 @@ type AppData = {
 };
 
 const AppDataContext = createContext<AppData>({
+  characterData: null,
+  setCharacterData: () => {},
+  id: 1,
+  setId: () => {},
   isLoading: false,
   setIsLoading: () => {},
   error: "",
   setError: () => {},
-  characterData: null,
-  setCharacterData: () => {},
   handleNextClick: () => {},
   handlePrevClick: () => {},
 });
@@ -53,43 +55,19 @@ export const AppDataProvider = ({
   const [characterData, setCharacterData] =
     useState<AppData["characterData"]>(null);
 
-  const handleNextClick = () => {
+  const handleNextClick = useCallback(() => {
     setId(id + 1);
-  };
+  }, [id]);
 
-  const handlePrevClick = () => {
+  const handlePrevClick = useCallback(() => {
     setId(id - 1);
-  };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setIsLoading(true);
-        const response: Character = await ky
-          .get(`${API_URL}/character/${id}`)
-          .json();
-
-        const nextCharacterData: AppData["characterData"] = {
-          id: response.id,
-          name: response.name,
-          status: response.status,
-          gender: response.gender,
-          image: response.image,
-          episode: response.episode,
-        };
-
-        setCharacterData(nextCharacterData);
-      } catch (e) {
-        setError("An error occured... try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    })();
   }, [id]);
 
   return (
     <AppDataContext.Provider
       value={{
+        id,
+        setId,
         isLoading,
         setIsLoading,
         characterData,

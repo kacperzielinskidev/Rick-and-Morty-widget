@@ -1,7 +1,7 @@
 import { useAppData } from "../../context/AppData.context";
 import {
   CharacterWidgetContainer,
-  CharacterWidgetContainerState,
+  CharacterWidgetState,
   CharacterStatusBar,
   CharacterAvatar,
   CharacterStatusBarName,
@@ -11,20 +11,57 @@ import {
   CharacterWidgetButtonContainer,
 } from "./CharacterWidget.styled";
 import { StyledButton } from "../Button/Button.styled";
+import { useCallback, useEffect } from "react";
+import { fetcher } from "../../utils/fetcher";
+import { API_URL } from "../../config";
 
 export const CharacterWidget = () => {
-  const { characterData, handleNextClick, handlePrevClick, isLoading, error } =
-    useAppData();
+  const {
+    handleNextClick,
+    handlePrevClick,
+    id,
+    setCharacterData,
+    characterData,
+    setIsLoading,
+    isLoading,
+    error,
+    setError,
+  } = useAppData();
+
+  const getCharacter = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetcher(`${API_URL}/character/${id}`, {
+        method: "GET",
+      });
+      setCharacterData(response);
+    } catch (e) {
+      console.log(e);
+      setError("An error occured... try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, setCharacterData, setError, setIsLoading]);
+
+  useEffect(() => {
+    getCharacter();
+  }, [getCharacter]);
 
   if (!characterData) return null;
-  if (error)
+  if (isLoading)
     return (
-      <CharacterWidgetContainerState>{error}</CharacterWidgetContainerState>
+      <CharacterWidgetState
+        initial={{ y: -100 }}
+        animate={{ y: -10 }}
+        transition={{ type: "spring", stiffness: 250 }}
+      >
+        Loading...
+      </CharacterWidgetState>
     );
 
   return (
     <>
-      {!isLoading ? (
+      {!error ? (
         <>
           <CharacterWidgetContainer
             initial={{ x: "-100vw" }}
@@ -89,9 +126,13 @@ export const CharacterWidget = () => {
           </CharacterWidgetButtonContainer>
         </>
       ) : (
-        <CharacterWidgetContainerState>
-          Loading...
-        </CharacterWidgetContainerState>
+        <CharacterWidgetState
+          initial={{ y: -100 }}
+          animate={{ y: -10 }}
+          transition={{ type: "spring", stiffness: 250 }}
+        >
+          {error}
+        </CharacterWidgetState>
       )}
     </>
   );
